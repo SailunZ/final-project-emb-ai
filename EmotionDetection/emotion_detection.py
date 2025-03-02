@@ -11,18 +11,22 @@ def emotion_detector(text_to_analyse):  # Define a function named emotion_detect
     # Parsing the JSON response from the API
     formatted_response = json.loads(response.text)
 
-    # Extracting emotion scores from the response
-    anger_score = formatted_response['emotionPredictions'][0]['emotion']['anger']
-    disgust_score = formatted_response['emotionPredictions'][0]['emotion']['disgust']
-    fear_score = formatted_response['emotionPredictions'][0]['emotion']['fear']
-    joy_score = formatted_response['emotionPredictions'][0]['emotion']['joy']
-    sadness_score = formatted_response['emotionPredictions'][0]['emotion']['sadness']
+    # If the status code is 200, extract emotion scores from the response
+    if response.status_code == 200:      
+        anger_score = formatted_response['emotionPredictions'][0]['emotion']['anger']
+        disgust_score = formatted_response['emotionPredictions'][0]['emotion']['disgust']
+        fear_score = formatted_response['emotionPredictions'][0]['emotion']['fear']
+        joy_score = formatted_response['emotionPredictions'][0]['emotion']['joy']
+        sadness_score = formatted_response['emotionPredictions'][0]['emotion']['sadness']
     
-    # Find the dominant emotion
-    emotion_list = ['anger','disgust','fear','joy','sadness']
-    score_list = [anger_score, disgust_score, fear_score, joy_score, sadness_score]
-    dominant_emotion = emotion_list[numpy.argmax(score_list)]
-
+        # Find the dominant emotion
+        emotion_list = ['anger','disgust','fear','joy','sadness']
+        score_list = [anger_score, disgust_score, fear_score, joy_score, sadness_score]
+        dominant_emotion = emotion_list[numpy.argmax(score_list)]
+    # If the status code is 400, set the values to None
+    elif response.status_code == 400: 
+        anger_score = disgust_score = fear_score = joy_score = sadness_score = dominant_emotion = None
+        
     # Returning a dictionary containing emotion detection results
     return {
             'anger': anger_score,
